@@ -22,7 +22,6 @@ int divide (int number1, int number2) {
     return result;
   }
   else {
-    int error = 2;
-    return error;
+    return DIV_ERROR;
   }
 }

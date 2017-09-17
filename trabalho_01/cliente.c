@@ -63,7 +63,7 @@ void iniciaConexao(int* socketFD, char* ipServidor, unsigned short int portaServ
 
   struct sockaddr_in endereco;
   endereco.sin_family = PF_INET;
-  endereco.sin_port = portaServidor;
+  endereco.sin_port = htons(portaServidor);
   endereco.sin_addr.s_addr = inet_addr(ipServidor);
   memset(&(endereco.sin_zero), 0, 8);
 

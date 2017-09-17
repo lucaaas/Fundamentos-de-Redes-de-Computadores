@@ -5,6 +5,10 @@
 
 #include "socket_configuration.h"
 
+#define IPADRESS "127.0.0.1"
+#define PORTNUMBER 12000
+
+
 struct sockaddr_in configureServerAddr() {
   struct sockaddr_in serverAddr;
 
@@ -12,9 +16,9 @@ struct sockaddr_in configureServerAddr() {
   /* Address family = Internet */
   serverAddr.sin_family = AF_INET;
   /* Set port number, using htons function to use proper byte order */
-  serverAddr.sin_port = htons(2306);
+  serverAddr.sin_port = htons(PORTNUMBER);
   /* Set IP address to localhost */
-  serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serverAddr.sin_addr.s_addr = inet_addr(IPADRESS);
   /* Set all bits of the padding field to 0 */
   memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
@@ -22,32 +26,30 @@ struct sockaddr_in configureServerAddr() {
 }
 
 int createSocket() {
-  int socketServer, newSocket;
-  struct sockaddr_storage serverStorage;
-
   /*---- Create the socket. The three arguments are: ----*/
   /* 1) Internet domain 2) Stream socket 3) Default protocol (TCP in this case) */
-  socketServer = socket(PF_INET, SOCK_STREAM, 0);
+  int newSocket = socket(PF_INET, SOCK_STREAM, 0);
 
   struct sockaddr_in serverAddr;
   serverAddr = configureServerAddr();
 
   /*---- Bind the address struct to the socket ----*/
-  bind(socketServer, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
+  bind(newSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
 
-  /*---- Listen on the socket, with 5 max connection requests queued ----*/
-  int status = listen(socketServer, 5);
-  if(status == 0) {
-    printf("Listening\n");
-  }
-  else {
-    printf("Error\n");
-  }
+  return newSocket;
+}
 
-  /*---- Accept call creates a new socket for the incoming connection ----*/
-  socklen_t addr_size;
-  addr_size = sizeof serverStorage;
-  newSocket = accept(socketServer, (struct sockaddr *) &serverStorage, &addr_size);
+int acceptConnection(int socketServer) {
+  struct sockaddr_storage serverStorage;
+  socklen_t addr_size = sizeof serverStorage;
+  int newSocket = accept(socketServer, (struct sockaddr *) &serverStorage, &addr_size);
 
-  return socketServer;
+  return newSocket;
+}
+
+// Listen on the socket, with 5 max connection requests queued
+int listenSocket(int serverSocket, int qntConnection) {
+  int status = listen(serverSocket, qntConnection);
+
+  return status;
 }
