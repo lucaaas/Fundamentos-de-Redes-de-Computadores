@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "cliente.h"
+#include "client.h"
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -12,7 +12,7 @@
 #define TAM_ENTRADA_USUARIO 256
 #define SERVER_DEFAULT_IP "127.0.0.1"
 #define SERVER_DEFAULT_PORT 12000
-#define TAM_REQ 256
+
 #define DEBUG 0
 
 void enviaRequisicao(mensagem_t requisicao){
@@ -174,10 +174,15 @@ int main(int argc, char* argv[]){
   char entrada[TAM_ENTRADA_USUARIO];
   int tamanho = TAM_ENTRADA_USUARIO;
   int socketFD;
-  iniciaConexao(&socketFD, ipServidor, portaServidor);
   lerEntradaUsuario(entrada, tamanho);
+  iniciaConexao(&socketFD, ipServidor, portaServidor);
   criarMensagem(entrada, tamanho, socketFD, &mensagem);
   enviaRequisicao(mensagem);
+
+  char *messageResult = malloc (TAM_REQ * sizeof(char));
+  recv(mensagem.socketFD, messageResult, TAM_REQ, 0);
+
+  printf("RESULTADO = %s\n", messageResult);
 
   return 0;
 }

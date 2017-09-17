@@ -25,3 +25,25 @@ int divide (int number1, int number2) {
     return DIV_ERROR;
   }
 }
+
+int calculate (char* operator, int number1, int number2) {
+  int result = -1;
+
+  if (!strcmp (operator, "add")) {
+    result = add (number1, number2);
+  }
+
+  else if (!strcmp (operator, "sub")) {
+    result = subtract (number1, number2);
+  }
+
+  else if (!strcmp (operator, "mul")) {
+    result = multiply (number1, number2);
+  }
+
+  else {
+    result = divide (number1, number2);
+  }
+
+  return result;
+}
