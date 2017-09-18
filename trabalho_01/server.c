@@ -37,15 +37,12 @@ int extractNumber(char* message, int *position) {
   int i = 0;
   *position += 1;
 
-  printf("message= %s\n", message);
   while (message[*position] != ' ' && *position < strlen(message)) {
-    printf("pos = %d\n", *position);
     numberc[i] = message[*position];
     i++;
     *position += 1;
   }
 
-  printf("numberc = %s\n", numberc);
   int number = atoi(numberc);
   return number;
 }
@@ -62,7 +59,6 @@ int main() {
     char message[TAM_REQ];
     memset(message,'\0', TAM_REQ);
     recv(newSocket, message, TAM_REQ, 0);
-    printf("fmessage = %s\n", message);
 
     char *operator = extractOperator (message);
 

@@ -34,11 +34,6 @@ void enviaRequisicao(mensagem_t requisicao){
   }
 #else
 int i;
-for (i = 0; i < strlen(req); i++){
-  printf("%c", req[i]);
-}
-printf("\n");
-
   int totalBytesEnviar = strlen(req);
   int bytesEnviados = 0;
   while(bytesEnviados < totalBytesEnviar){
@@ -198,7 +193,6 @@ void formatarMensagem(char* mensagem, int* deuErro, int* resultado){
   temp[0] =  mensagem[0];
   temp[1] = '\0';
   *deuErro = atoi(temp);
-  printf("%d\n", *deuErro);
   char resultadoTemp[TAM_REQ];
   memset(resultadoTemp, '\0', TAM_REQ);
   int contador, aux;
@@ -206,7 +200,6 @@ void formatarMensagem(char* mensagem, int* deuErro, int* resultado){
     resultadoTemp[aux] = mensagem[contador];
   }
   *resultado = atoi(resultadoTemp);
-  printf("Aqui: %d\n", *resultado);
 }
 
 void imprimirResultado(int deuErro, int resultado){
@@ -244,7 +237,6 @@ int main(int argc, char* argv[]){
 
   char *messageResult = malloc (TAM_REQ * sizeof(char));
   recv(mensagem.socketFD, messageResult, TAM_REQ, 0);
-  printf("%s\n", messageResult);
   int deuErro, resultado;
   formatarMensagem(messageResult, &deuErro, &resultado);
   imprimirResultado(deuErro, resultado);
