@@ -37,6 +37,7 @@ int i;
 for (i = 0; i < strlen(req); i++){
   printf("%c", req[i]);
 }
+printf("\n");
 
   int totalBytesEnviar = strlen(req);
   int bytesEnviados = 0;
@@ -192,6 +193,32 @@ void criarMensagem(char* entrada, int tamanho, int socketFD, mensagem_t* mensage
   mensagem->segundoNumero = getNumeroInteiro(entrada, &posicao);
 }
 
+void formatarMensagem(char* mensagem, int* deuErro, int* resultado){
+  char temp[2];
+  temp[0] =  mensagem[0];
+  temp[1] = '\0';
+  *deuErro = atoi(temp);
+  printf("%d\n", *deuErro);
+  char resultadoTemp[TAM_REQ];
+  memset(resultadoTemp, '\0', TAM_REQ);
+  int contador, aux;
+  for (contador = 2, aux = 0; mensagem[contador] != 0; contador++, aux++){
+    resultadoTemp[aux] = mensagem[contador];
+  }
+  *resultado = atoi(resultadoTemp);
+  printf("Aqui: %d\n", *resultado);
+}
+
+void imprimirResultado(int deuErro, int resultado){
+  if (deuErro == 0){
+    printf("\nNao houve nenhum erro!\n");
+    printf("Resultado: %d\n", resultado);
+  }else{
+    printf("\nHouve um erro!\n");
+    printf("Código do erro: %d\n", resultado);
+  }
+}
+
 int main(int argc, char* argv[]){
   unsigned short int portaServidor;
   char *ipServidor;
@@ -217,8 +244,10 @@ int main(int argc, char* argv[]){
 
   char *messageResult = malloc (TAM_REQ * sizeof(char));
   recv(mensagem.socketFD, messageResult, TAM_REQ, 0);
-
-  printf("RESULTADO = %s\n", messageResult);
+  printf("%s\n", messageResult);
+  int deuErro, resultado;
+  formatarMensagem(messageResult, &deuErro, &resultado);
+  imprimirResultado(deuErro, resultado);
 
   return 0;
 }
