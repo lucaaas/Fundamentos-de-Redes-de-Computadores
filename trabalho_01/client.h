@@ -2,7 +2,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-  #define OPP_LEN 3
+  #define OPP_LEN 4
   #define TAM_REQ 256
 
   typedef struct {

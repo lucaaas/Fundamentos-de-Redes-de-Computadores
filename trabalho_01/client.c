@@ -33,6 +33,11 @@ void enviaRequisicao(mensagem_t requisicao){
     printf("%c", req[i]);
   }
 #else
+int i;
+for (i = 0; i < strlen(req); i++){
+  printf("%c", req[i]);
+}
+
   int totalBytesEnviar = strlen(req);
   int bytesEnviados = 0;
   while(bytesEnviados < totalBytesEnviar){
@@ -49,10 +54,38 @@ void enviaRequisicao(mensagem_t requisicao){
 #endif
 }
 
+void validaEntrada(char* entrada, int tamanho){
+  int quantidadeDeOperadores = 0;
+  int encontrouCaracter = 0;
+  int contador = 0;
+  do{
+    fgets(entrada, tamanho, stdin);
+    encontrouCaracter = 0;
+    quantidadeDeOperadores = 0;
+    for (contador = 0; entrada[contador] != 0; contador++){
+      if (entrada[contador] == '+' || entrada[contador] == '-' || entrada[contador] == '*' || entrada[contador] == '/'){
+        quantidadeDeOperadores++;
+        if (quantidadeDeOperadores > 1) {
+          printf("Entrada inválida! A entrada possui mais de um operador!\n");
+          printf("Modo de entrada: <primeiro numero>  <operador>  <segundo numero>\n");
+          printf("Digite novamente:\n");
+        }
+      }
+      if(isalpha(entrada[contador])){
+        encontrouCaracter = 1;
+        printf("Entrada inválida! A entrada possui uma letra\n");
+        printf("Modo de entrada: <primeiro numero>  <operador>  <segundo numero>\n");
+        printf("Digite novamente:\n");
+      }
+    }
+  }while(quantidadeDeOperadores != 1 || encontrouCaracter != 0);
+}
+
 void lerEntradaUsuario(char* entrada, int tamanho){
   printf("Digite a String de Entrada: \n");
-  fgets(entrada, tamanho, stdin);
+  validaEntrada(entrada, tamanho);
 }
+
 
 void iniciaConexao(int* socketFD, char* ipServidor, unsigned short int portaServidor){
   *socketFD = socket(PF_INET, SOCK_STREAM, 0);
@@ -68,32 +101,32 @@ void iniciaConexao(int* socketFD, char* ipServidor, unsigned short int portaServ
   memset(&(endereco.sin_zero), 0, 8);
 
 
-
   if(connect(*socketFD, (struct sockaddr *)&endereco, sizeof(struct sockaddr_in)) == -1){
     perror("Erro ao conectar");
     exit(1);
   }
 }
 
-char *trim(char *str){
-  char *end;
+char *trim(char *palavra){
+  char *fim;
 
-  while(isspace((unsigned char)*str)) str++;
+  while(isspace((unsigned char)*palavra)) palavra++;
 
-  if(*str == 0)
-    return str;
+  if(*palavra == 0)
+    return palavra;
 
-  end = str + strlen(str) - 1;
-  while(end > str && isspace((unsigned char)*end)) end--;
+  fim = palavra + strlen(palavra) - 1;
+  while(fim > palavra && isspace((unsigned char)*fim)) fim--;
 
-  *(end+1) = 0;
+  *(fim+1) = 0;
 
-  return str;
+  return palavra;
 }
 
 void getOperador(char* entrada, int* posicao, char* resultado){
   char operador;
   int contador = *posicao;
+
   for (; entrada[contador] != 0; contador++){
     if (entrada[contador] == '+' || entrada[contador] == '-' || entrada[contador] == '*' || entrada[contador] == '/') {
       operador = entrada[contador];
@@ -112,8 +145,12 @@ void getOperador(char* entrada, int* posicao, char* resultado){
     case '/':
       strcpy(resultado, "div");
       break;
-    default:
+    case '*':
       strcpy(resultado, "mul");
+      break;
+    default:
+      printf("Operador Inválido!");
+      exit(1);
   }
   *posicao = contador;
 }
@@ -123,21 +160,20 @@ int getNumeroInteiro(char* entrada, int* posicao){
   int contadorValorTemp = 0;
   int contador = *posicao;
 
-  while(!isdigit(entrada[contador])){
+  while(isdigit(entrada[contador]) == 0){
     if (entrada[contador] == 0) {
       perror("Entrada Inválida");
       exit(1);
     }
     contador++;
   }
-
   for(contadorValorTemp = 0; entrada[contador] != 0; contador++, contadorValorTemp++){
 
     if(isdigit(entrada[contador])){
       valorTemp[contadorValorTemp] = entrada[contador];
     }else{
       contadorValorTemp++;
-      contador++;
+      //contador++;
       break;
     }
   }
