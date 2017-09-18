@@ -60,6 +60,7 @@ int main() {
     int newSocket = acceptConnection(socketServer);
 
     char message[TAM_REQ];
+    memset(message,'\0', TAM_REQ);
     recv(newSocket, message, TAM_REQ, 0);
     printf("fmessage = %s\n", message);
 
